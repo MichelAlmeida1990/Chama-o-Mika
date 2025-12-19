@@ -164,14 +164,20 @@ REST_FRAMEWORK = {
 
 # CORS
 # Remove espaços em branco e filtra valores vazios
-CORS_ALLOWED_ORIGINS = [
-    origin.strip() 
-    for origin in os.environ.get(
-        'CORS_ALLOWED_ORIGINS',
-        'http://localhost:3000,http://127.0.0.1:3000'
-    ).split(',') 
-    if origin.strip()
-]
+# Adiciona https:// automaticamente se não tiver scheme
+cors_origins_raw = os.environ.get(
+    'CORS_ALLOWED_ORIGINS',
+    'http://localhost:3000,http://127.0.0.1:3000'
+)
+
+CORS_ALLOWED_ORIGINS = []
+for origin in cors_origins_raw.split(','):
+    origin = origin.strip()
+    if origin:
+        # Se não tiver scheme (http:// ou https://), adiciona https://
+        if not origin.startswith(('http://', 'https://')):
+            origin = f'https://{origin}'
+        CORS_ALLOWED_ORIGINS.append(origin)
 
 CORS_ALLOW_CREDENTIALS = True
 
