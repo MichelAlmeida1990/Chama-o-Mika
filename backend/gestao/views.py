@@ -67,16 +67,22 @@ def populate_mock_data_view(request):
     """
     Endpoint temporário para popular dados mockups
     Protegido por variável de ambiente POPULATE_SECRET
+    Não requer autenticação (bypass do DRF permissions)
     """
     # Verificar secret (se configurado)
     populate_secret = os.environ.get('POPULATE_SECRET', '')
     if populate_secret:
-        provided_secret = request.POST.get('secret') or request.headers.get('X-Populate-Secret', '')
+        # Aceita secret via POST, header ou query string
+        provided_secret = (
+            request.POST.get('secret') or 
+            request.headers.get('X-Populate-Secret', '') or
+            request.GET.get('secret', '')
+        )
         if provided_secret != populate_secret:
             return JsonResponse({'error': 'Secret inválido'}, status=403)
     
     try:
-        # Executar o comando
+        # Executar o comando diretamente (bypass DRF)
         from io import StringIO
         import sys
         
@@ -94,9 +100,11 @@ def populate_mock_data_view(request):
             'output': output
         })
     except Exception as e:
+        import traceback
         return JsonResponse({
             'success': False,
-            'error': str(e)
+            'error': str(e),
+            'traceback': traceback.format_exc() if settings.DEBUG else None
         }, status=500)
 
 
