@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.core.management import call_command
 from django.conf import settings
+from decimal import Decimal
 import json
 import os
 
