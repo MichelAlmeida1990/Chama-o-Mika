@@ -61,3 +61,42 @@ def user_view(request):
         return JsonResponse({'error': 'Não autenticado'}, status=401)
 
 
+@csrf_exempt
+@require_http_methods(["POST"])
+def populate_mock_data_view(request):
+    """
+    Endpoint temporário para popular dados mockups
+    Protegido por variável de ambiente POPULATE_SECRET
+    """
+    # Verificar secret (se configurado)
+    populate_secret = os.environ.get('POPULATE_SECRET', '')
+    if populate_secret:
+        provided_secret = request.POST.get('secret') or request.headers.get('X-Populate-Secret', '')
+        if provided_secret != populate_secret:
+            return JsonResponse({'error': 'Secret inválido'}, status=403)
+    
+    try:
+        # Executar o comando
+        from io import StringIO
+        import sys
+        
+        old_stdout = sys.stdout
+        sys.stdout = StringIO()
+        
+        call_command('populate_mock_data')
+        
+        output = sys.stdout.getvalue()
+        sys.stdout = old_stdout
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Dados mockups criados com sucesso!',
+            'output': output
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
