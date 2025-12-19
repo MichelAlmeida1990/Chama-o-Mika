@@ -19,7 +19,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key-change-in-pro
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # Parse ALLOWED_HOSTS from environment variable or use default
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+# Remove espaços em branco e filtra valores vazios
+ALLOWED_HOSTS = [host.strip() for host in os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') if host.strip()]
 
 
 # Application definition
@@ -162,12 +163,21 @@ REST_FRAMEWORK = {
 }
 
 # CORS
-CORS_ALLOWED_ORIGINS = os.environ.get(
-    'CORS_ALLOWED_ORIGINS',
-    'http://localhost:3000,http://127.0.0.1:3000'
-).split(',')
+# Remove espaços em branco e filtra valores vazios
+CORS_ALLOWED_ORIGINS = [
+    origin.strip() 
+    for origin in os.environ.get(
+        'CORS_ALLOWED_ORIGINS',
+        'http://localhost:3000,http://127.0.0.1:3000'
+    ).split(',') 
+    if origin.strip()
+]
 
 CORS_ALLOW_CREDENTIALS = True
+
+# Permitir todas as origens em desenvolvimento (DEBUG=True)
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
 
 # Security settings for production
 if not DEBUG:
