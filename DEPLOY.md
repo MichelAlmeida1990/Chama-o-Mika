@@ -24,8 +24,9 @@ Este guia explica como fazer o deploy do sistema **Chama o Mika** no **Render** 
 **Configurações Básicas:**
 - **Name**: `chama-o-mika-backend` (ou o nome que preferir)
 - **Environment**: `Python 3`
-- **Build Command**: `cd backend && pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput`
-- **Start Command**: `cd backend && gunicorn gestao.wsgi:application --bind 0.0.0.0:$PORT`
+- **Root Directory**: `backend` ⚠️ **IMPORTANTE: Configure isso primeiro!**
+- **Build Command**: `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput`
+- **Start Command**: `gunicorn gestao.wsgi:application --bind 0.0.0.0:$PORT` ⚠️ **NÃO use `cd backend` se Root Directory está configurado!**
 
 **Variáveis de Ambiente:**
 Adicione as seguintes variáveis de ambiente no painel do Render:
@@ -78,19 +79,37 @@ E adicione `dj-database-url==2.1.0` ao `requirements.txt`.
 
 ### 5. Criar Superusuário
 
-Após o deploy, acesse o terminal do Render e execute:
+**Opção 1 - Automático (Recomendado):**
 
+Adicione esta variável de ambiente no Render:
+- **Nome**: `AUTO_CREATE_SUPERUSER`
+- **Valor**: `True`
+
+O superusuário será criado automaticamente no primeiro deploy:
+- Username: `admin`
+- Email: `admin@example.com`
+- Password: `admin123`
+
+⚠️ **IMPORTANTE**: Altere a senha após o primeiro login!
+
+**Opção 2 - Via Management Command (se tiver shell):**
+
+Se você tiver acesso ao shell do Render:
 ```bash
-cd backend
-python manage.py createsuperuser
+python manage.py create_default_superuser
 ```
 
-Ou use o script:
+**Opção 3 - Tornar usuário existente superusuário:**
 
-```bash
-cd backend
-python manage.py shell -c "exec(open('create_superuser.py').read())"
-```
+Se você já tem um usuário (ex: `rafael@chamaomika.com`) e quer torná-lo superusuário, adicione esta variável de ambiente no Render:
+- **Nome**: `MAKE_SUPERUSER`
+- **Valor**: `rafael@chamaomika.com`
+
+O usuário será automaticamente promovido a superusuário no próximo deploy/restart.
+
+**Opção 4 - Via Django Admin:**
+
+Acesse `https://seu-backend.onrender.com/admin/` e crie manualmente.
 
 ---
 
