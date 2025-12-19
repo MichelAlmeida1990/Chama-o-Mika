@@ -22,6 +22,8 @@ Configure estas variáveis no **Render Dashboard → Environment Variables**
 | `CORS_ALLOWED_ORIGINS` | `https://seu-frontend.vercel.app,http://localhost:3000` | URLs do frontend (substituir pela URL do Vercel) |
 | `SECURE_SSL_REDIRECT` | `True` | Forçar HTTPS (True em produção) |
 | `DATABASE_URL` | `postgresql://user:pass@host:port/dbname` | URL do PostgreSQL (fornecida pelo Render) |
+| `AUTO_CREATE_SUPERUSER` | `True` | Cria automaticamente superusuário padrão (admin/admin123) se não existir |
+| `MAKE_SUPERUSER` | `rafael@chamaomika.com` | Torna usuário existente superusuário automaticamente (use o email) |
 
 ### Como gerar SECRET_KEY:
 
