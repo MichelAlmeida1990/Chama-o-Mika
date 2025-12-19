@@ -4,7 +4,6 @@ Django settings for gestao project.
 
 from pathlib import Path
 import os
-import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -75,14 +74,17 @@ WSGI_APPLICATION = 'gestao.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 # Verificar se DATABASE_URL existe e não está vazio
-database_url = os.environ.get('DATABASE_URL')
-if database_url and database_url.strip():
+database_url = os.environ.get('DATABASE_URL', '').strip()
+
+if database_url and database_url.startswith('postgresql://'):
     try:
+        import dj_database_url
         DATABASES = {
             'default': dj_database_url.parse(database_url)
         }
-    except Exception:
+    except Exception as e:
         # Se houver erro ao fazer parse, usar SQLite
+        print(f"Erro ao conectar com PostgreSQL: {e}. Usando SQLite.")
         DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
@@ -90,6 +92,7 @@ if database_url and database_url.strip():
             }
         }
 else:
+    # Usar SQLite por padrão
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
