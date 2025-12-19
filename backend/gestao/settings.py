@@ -180,16 +180,35 @@ for origin in cors_origins_raw.split(','):
         CORS_ALLOWED_ORIGINS.append(origin)
 
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'x-populate-secret',  # Para o endpoint de populate
+]
 
 # Permitir todas as origens em desenvolvimento (DEBUG=True)
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 
+# Session configuration for cross-domain authentication
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'None'  # Permite cookies em requisições cross-domain
+SESSION_COOKIE_SECURE = True  # Apenas HTTPS em produção
+SESSION_COOKIE_AGE = 86400  # 24 horas
+CSRF_COOKIE_HTTPONLY = False  # JavaScript precisa acessar para enviar no header
+CSRF_COOKIE_SAMESITE = 'None'
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS.copy()  # Confia nos mesmos origens do CORS
+
 # Security settings for production
 if not DEBUG:
     SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'False') == 'True'
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
