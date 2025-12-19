@@ -74,10 +74,21 @@ WSGI_APPLICATION = 'gestao.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-if 'DATABASE_URL' in os.environ:
-    DATABASES = {
-        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
-    }
+# Verificar se DATABASE_URL existe e não está vazio
+database_url = os.environ.get('DATABASE_URL')
+if database_url and database_url.strip():
+    try:
+        DATABASES = {
+            'default': dj_database_url.parse(database_url)
+        }
+    except Exception:
+        # Se houver erro ao fazer parse, usar SQLite
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 else:
     DATABASES = {
         'default': {
