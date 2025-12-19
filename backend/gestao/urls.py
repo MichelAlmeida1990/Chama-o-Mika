@@ -14,6 +14,7 @@ urlpatterns = [
     path('api/auth/login/', login_view, name='login'),
     path('api/auth/logout/', logout_view, name='logout'),
     path('api/auth/user/', user_view, name='user'),
+    path('api/populate-mock-data/', populate_mock_data_view, name='populate_mock_data'),  # Endpoint temporário
     path('api/auth/', include('rest_framework.urls')),
 ]
 
