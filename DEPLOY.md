@@ -25,7 +25,7 @@ Este guia explica como fazer o deploy do sistema **Chama o Mika** no **Render** 
 - **Name**: `chama-o-mika-backend` (ou o nome que preferir)
 - **Environment**: `Python 3`
 - **Root Directory**: `backend` ⚠️ **IMPORTANTE: Configure isso primeiro!**
-- **Build Command**: `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput`
+- **Build Command**: `pip install -r requirements.txt && python manage.py collectstatic --noinput --clear && python manage.py migrate --noinput`
 - **Start Command**: `gunicorn gestao.wsgi:application --bind 0.0.0.0:$PORT` ⚠️ **NÃO use `cd backend` se Root Directory está configurado!**
 
 **Variáveis de Ambiente:**
@@ -34,7 +34,7 @@ Adicione as seguintes variáveis de ambiente no painel do Render:
 ```env
 SECRET_KEY=gerar-uma-chave-secreta-forte-aqui
 DEBUG=False
-ALLOWED_HOSTS=seu-backend.onrender.com
+ALLOWED_HOSTS=seu-backend.onrender.com,localhost,127.0.0.1
 CORS_ALLOWED_ORIGINS=https://seu-frontend.vercel.app
 SECURE_SSL_REDIRECT=True
 ```
