@@ -29,7 +29,6 @@ const Relatorios = () => {
   const [dataFim, setDataFim] = useState(hoje.toISOString().split('T')[0]);
   const [fluxoCaixa, setFluxoCaixa] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [hasLoaded, setHasLoaded] = useState(false);
 
   const loadFluxoCaixa = useCallback(async () => {
     if (!dataInicio || !dataFim) return;
@@ -40,7 +39,6 @@ const Relatorios = () => {
         `/api/relatorios/fluxo_caixa/?data_inicio=${dataInicio}&data_fim=${dataFim}`
       );
       setFluxoCaixa(response.data);
-      setHasLoaded(true);
     } catch (error) {
       console.error('Erro ao carregar fluxo de caixa:', error);
     } finally {
@@ -48,13 +46,12 @@ const Relatorios = () => {
     }
   }, [dataInicio, dataFim]);
 
-  // Carrega apenas uma vez quando o componente monta
+  // Carrega quando o componente monta ou quando as datas mudam
   useEffect(() => {
-    if (!hasLoaded && dataInicio && dataFim) {
+    if (dataInicio && dataFim) {
       loadFluxoCaixa();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dataInicio, dataFim, loadFluxoCaixa]);
 
   const chartData = fluxoCaixa ? {
     labels: ['Receitas', 'Despesas', 'Saldo'],
@@ -113,7 +110,6 @@ const Relatorios = () => {
               <Button 
                 variant="primary" 
                 onClick={() => {
-                  setHasLoaded(false);
                   loadFluxoCaixa();
                 }}
                 disabled={loading}

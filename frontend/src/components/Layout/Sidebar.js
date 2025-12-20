@@ -33,15 +33,36 @@ const Sidebar = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 991);
-      if (window.innerWidth > 991 && collapsed) {
-        toggleSidebar(); // Fechar sidebar quando voltar para desktop
+      const wasMobile = isMobile;
+      const nowMobile = window.innerWidth <= 991;
+      setIsMobile(nowMobile);
+      
+      // Se mudou de mobile para desktop, garantir que sidebar não está collapsed
+      if (wasMobile && !nowMobile && collapsed) {
+        toggleSidebar(); // Abrir sidebar quando voltar para desktop
+      }
+      // Se mudou de desktop para mobile, fechar sidebar
+      if (!wasMobile && nowMobile && !collapsed) {
+        toggleSidebar(); // Fechar sidebar quando entrar em mobile
       }
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [collapsed, toggleSidebar]);
+  }, [collapsed, toggleSidebar, isMobile]);
+
+  // Fechar sidebar no mobile quando navegar
+  useEffect(() => {
+    if (isMobile && !collapsed) {
+      // Fechar sidebar após navegação no mobile
+      const timer = setTimeout(() => {
+        if (isMobile) {
+          toggleSidebar();
+        }
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [location.pathname, isMobile]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleLogout = async () => {
     await logout();
@@ -65,11 +86,17 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Overlay para mobile */}
-      {collapsed && isMobile && (
+      {/* Overlay para mobile - aparece quando sidebar está ABERTO no mobile */}
+      {!collapsed && isMobile && (
         <div 
           className="sidebar-overlay active" 
-          onClick={toggleSidebar}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleSidebar();
+          }}
+          onTouchStart={(e) => {
+            e.stopPropagation();
+          }}
         />
       )}
       
@@ -78,8 +105,12 @@ const Sidebar = () => {
         <div className="top-navbar-content">
           <button 
             className="sidebar-toggle-btn" 
-            onClick={toggleSidebar}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleSidebar();
+            }}
             title={collapsed ? 'Expandir menu' : 'Recolher menu'}
+            aria-label={collapsed ? 'Expandir menu' : 'Recolher menu'}
           >
             <FiMenu size={20} />
           </button>
@@ -131,6 +162,11 @@ const Sidebar = () => {
               to="/"
               className={`sidebar-link ${isActive('/') ? 'active' : ''}`}
               title="Dashboard"
+              onClick={() => {
+                if (isMobile && !collapsed) {
+                  setTimeout(() => toggleSidebar(), 100);
+                }
+              }}
             >
               <FiHome className="sidebar-icon" />
               <span className={collapsed ? 'd-none' : ''}>Dashboard</span>
@@ -156,18 +192,33 @@ const Sidebar = () => {
                   <Link
                     to="/produtos"
                     className={`sidebar-submenu-link ${isActive('/produtos') ? 'active' : ''}`}
+                    onClick={() => {
+                      if (isMobile && !collapsed) {
+                        setTimeout(() => toggleSidebar(), 100);
+                      }
+                    }}
                   >
                     Produtos
                   </Link>
                   <Link
                     to="/categorias"
                     className={`sidebar-submenu-link ${isActive('/categorias') ? 'active' : ''}`}
+                    onClick={() => {
+                      if (isMobile && !collapsed) {
+                        setTimeout(() => toggleSidebar(), 100);
+                      }
+                    }}
                   >
                     Categorias
                   </Link>
                   <Link
                     to="/movimentacoes"
                     className={`sidebar-submenu-link ${isActive('/movimentacoes') ? 'active' : ''}`}
+                    onClick={() => {
+                      if (isMobile && !collapsed) {
+                        setTimeout(() => toggleSidebar(), 100);
+                      }
+                    }}
                   >
                     Movimentações
                   </Link>
@@ -195,6 +246,11 @@ const Sidebar = () => {
                   <Link
                     to="/clientes"
                     className={`sidebar-submenu-link ${isActive('/clientes') ? 'active' : ''}`}
+                    onClick={() => {
+                      if (isMobile && !collapsed) {
+                        setTimeout(() => toggleSidebar(), 100);
+                      }
+                    }}
                   >
                     <FiUser className="me-2" size={14} />
                     Clientes
@@ -202,6 +258,11 @@ const Sidebar = () => {
                   <Link
                     to="/vendas"
                     className={`sidebar-submenu-link ${isActive('/vendas') ? 'active' : ''}`}
+                    onClick={() => {
+                      if (isMobile && !collapsed) {
+                        setTimeout(() => toggleSidebar(), 100);
+                      }
+                    }}
                   >
                     <FiDollarSign className="me-2" size={14} />
                     Vendas
@@ -209,6 +270,11 @@ const Sidebar = () => {
                   <Link
                     to="/compras"
                     className={`sidebar-submenu-link ${isActive('/compras') ? 'active' : ''}`}
+                    onClick={() => {
+                      if (isMobile && !collapsed) {
+                        setTimeout(() => toggleSidebar(), 100);
+                      }
+                    }}
                   >
                     <FiShoppingCart className="me-2" size={14} />
                     Compras
@@ -216,6 +282,11 @@ const Sidebar = () => {
                   <Link
                     to="/contas-pagar"
                     className={`sidebar-submenu-link ${isActive('/contas-pagar') ? 'active' : ''}`}
+                    onClick={() => {
+                      if (isMobile && !collapsed) {
+                        setTimeout(() => toggleSidebar(), 100);
+                      }
+                    }}
                   >
                     <FiFileText className="me-2" size={14} />
                     Contas a Pagar
@@ -223,6 +294,11 @@ const Sidebar = () => {
                   <Link
                     to="/contas-receber"
                     className={`sidebar-submenu-link ${isActive('/contas-receber') ? 'active' : ''}`}
+                    onClick={() => {
+                      if (isMobile && !collapsed) {
+                        setTimeout(() => toggleSidebar(), 100);
+                      }
+                    }}
                   >
                     <FiTrendingUp className="me-2" size={14} />
                     Contas a Receber
@@ -230,6 +306,11 @@ const Sidebar = () => {
                   <Link
                     to="/relatorios"
                     className={`sidebar-submenu-link ${isActive('/relatorios') ? 'active' : ''}`}
+                    onClick={() => {
+                      if (isMobile && !collapsed) {
+                        setTimeout(() => toggleSidebar(), 100);
+                      }
+                    }}
                   >
                     <FiBarChart2 className="me-2" size={14} />
                     Relatórios

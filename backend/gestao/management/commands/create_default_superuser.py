@@ -35,3 +35,5 @@ class Command(BaseCommand):
             self.stdout.write(f'   Email: {email}')
             self.stdout.write(f'   Password: {password}')
 
+
+

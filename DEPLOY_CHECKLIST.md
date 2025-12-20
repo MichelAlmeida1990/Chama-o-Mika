@@ -46,9 +46,12 @@ Use este checklist para garantir que tudo está pronto para o deploy.
 - [ ] `DATABASE_URL` adicionada como variável de ambiente
 - [ ] `dj-database-url` no requirements.txt ✅
 
-### Build e Start Commands
-- [ ] Build Command: `cd backend && pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput`
-- [ ] Start Command: `cd backend && gunicorn gestao.wsgi:application --bind 0.0.0.0:$PORT`
+### Root Directory e Commands
+- [ ] **Root Directory**: `backend` ⚠️ **CONFIGURE ISSO PRIMEIRO!**
+- [ ] Build Command: `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput`
+- [ ] Start Command: `gunicorn gestao.wsgi:application --bind 0.0.0.0:$PORT`
+
+⚠️ **IMPORTANTE**: Se você configurar o Root Directory como `backend`, NÃO use `cd backend` nos comandos!
 
 ### Pós-Deploy
 - [ ] Deploy concluído com sucesso

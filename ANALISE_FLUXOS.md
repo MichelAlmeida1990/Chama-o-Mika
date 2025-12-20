@@ -26,7 +26,7 @@
 
 ---
 
-## 🔄 Fluxos Principais - Mockups
+## 🔄 Fluxos Principais
 
 ### 1. Fluxo de Venda Completa
 
@@ -435,5 +435,7 @@ O sistema atual já possui uma base sólida com as funcionalidades essenciais. A
 4. **Mobile/PWA** - Acessibilidade
 
 Com essas implementações, o sistema estará completo para uso em produção em uma loja de roupas.
+
+
 
 

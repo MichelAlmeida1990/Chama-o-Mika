@@ -30,12 +30,20 @@ db.sqlite3-journal
 
 # Environment
 .env
+.env.local
+.env.production
+.env.development
 .venv
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
+
+# Credenciais (não commitar)
+CREDENCIAIS_REAIS.md
+*.env.real
+*.secret
 
 # IDE
 .vscode/

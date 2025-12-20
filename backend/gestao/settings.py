@@ -140,7 +140,8 @@ STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # WhiteNoise para servir arquivos estáticos em produção
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -190,7 +191,6 @@ CORS_ALLOW_HEADERS = [
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
-    'x-populate-secret',  # Para o endpoint de populate
 ]
 
 # Permitir todas as origens em desenvolvimento (DEBUG=True)
@@ -199,11 +199,24 @@ if DEBUG:
 
 # Session configuration for cross-domain authentication
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = 'None'  # Permite cookies em requisições cross-domain
-SESSION_COOKIE_SECURE = True  # Apenas HTTPS em produção
 SESSION_COOKIE_AGE = 86400  # 24 horas
-CSRF_COOKIE_HTTPONLY = False  # JavaScript precisa acessar para enviar no header
-CSRF_COOKIE_SAMESITE = 'None'
+
+# Configurações de cookies para desenvolvimento e produção
+if DEBUG:
+    # Desenvolvimento: permite HTTP e SameSite Lax
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_HTTPONLY = False
+    CSRF_COOKIE_SAMESITE = 'Lax'
+    CSRF_COOKIE_SECURE = False
+else:
+    # Produção: requer HTTPS e SameSite None
+    SESSION_COOKIE_SAMESITE = 'None'
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_HTTPONLY = False
+    CSRF_COOKIE_SAMESITE = 'None'
+    CSRF_COOKIE_SECURE = True
+
 CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS.copy()  # Confia nos mesmos origens do CORS
 
 # Security settings for production

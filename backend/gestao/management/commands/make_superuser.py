@@ -49,3 +49,5 @@ class Command(BaseCommand):
         self.stdout.write(f'   Superuser: {user.is_superuser}')
         self.stdout.write(f'   Staff: {user.is_staff}')
 
+
+

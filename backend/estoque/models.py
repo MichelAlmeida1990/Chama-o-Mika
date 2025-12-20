@@ -22,6 +22,7 @@ class Categoria(models.Model):
 class Produto(models.Model):
     """Produto (Roupa) com atributos específicos"""
     TAMANHOS = [
+        # Tamanhos de roupa
         ('PP', 'PP'),
         ('P', 'P'),
         ('M', 'M'),
@@ -29,6 +30,19 @@ class Produto(models.Model):
         ('GG', 'GG'),
         ('XG', 'XG'),
         ('XXG', 'XXG'),
+        # Tamanhos numéricos para tênis (34 a 45)
+        ('34', '34'),
+        ('35', '35'),
+        ('36', '36'),
+        ('37', '37'),
+        ('38', '38'),
+        ('39', '39'),
+        ('40', '40'),
+        ('41', '41'),
+        ('42', '42'),
+        ('43', '43'),
+        ('44', '44'),
+        ('45', '45'),
     ]
 
     nome = models.CharField(max_length=200)
@@ -102,5 +116,7 @@ class MovimentacaoEstoque(models.Model):
         elif self.tipo == 'SAIDA':
             self.produto.quantidade -= self.quantidade
         self.produto.save()
+
+
 
 

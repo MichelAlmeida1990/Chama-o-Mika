@@ -88,15 +88,23 @@ class VendaViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def relatorio(self, request):
         """Relatório de vendas"""
+        from datetime import datetime, timedelta
+        
         data_inicio = request.query_params.get('data_inicio')
         data_fim = request.query_params.get('data_fim')
 
         vendas = self.queryset.filter(status='CONCLUIDA')
 
         if data_inicio:
-            vendas = vendas.filter(criado_em__gte=data_inicio)
+            # Inclui desde o início do dia (timezone-aware)
+            inicio_datetime = timezone.make_aware(datetime.strptime(data_inicio, '%Y-%m-%d'))
+            vendas = vendas.filter(criado_em__gte=inicio_datetime)
         if data_fim:
-            vendas = vendas.filter(criado_em__lte=data_fim)
+            # Inclui até o final do dia (23:59:59.999999) (timezone-aware)
+            fim_datetime = timezone.make_aware(
+                datetime.strptime(data_fim, '%Y-%m-%d') + timedelta(days=1) - timedelta(microseconds=1)
+            )
+            vendas = vendas.filter(criado_em__lte=fim_datetime)
 
         total_vendas = vendas.aggregate(total=Sum('total'))['total'] or 0
         quantidade_vendas = vendas.count()
@@ -230,23 +238,33 @@ class RelatorioFinanceiroViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['get'])
     def fluxo_caixa(self, request):
         """Relatório de fluxo de caixa"""
+        from datetime import datetime, timedelta
+        
         data_inicio = request.query_params.get('data_inicio')
         data_fim = request.query_params.get('data_fim')
 
         # Receitas (vendas concluídas)
         vendas = Venda.objects.filter(status='CONCLUIDA')
         if data_inicio:
-            vendas = vendas.filter(criado_em__gte=data_inicio)
+            inicio_datetime = timezone.make_aware(datetime.strptime(data_inicio, '%Y-%m-%d'))
+            vendas = vendas.filter(criado_em__gte=inicio_datetime)
         if data_fim:
-            vendas = vendas.filter(criado_em__lte=data_fim)
+            fim_datetime = timezone.make_aware(
+                datetime.strptime(data_fim, '%Y-%m-%d') + timedelta(days=1) - timedelta(microseconds=1)
+            )
+            vendas = vendas.filter(criado_em__lte=fim_datetime)
         receitas = vendas.aggregate(total=Sum('total'))['total'] or 0
 
         # Despesas (compras concluídas)
         compras = Compra.objects.filter(status='CONCLUIDA')
         if data_inicio:
-            compras = compras.filter(criado_em__gte=data_inicio)
+            inicio_datetime = timezone.make_aware(datetime.strptime(data_inicio, '%Y-%m-%d'))
+            compras = compras.filter(criado_em__gte=inicio_datetime)
         if data_fim:
-            compras = compras.filter(criado_em__lte=data_fim)
+            fim_datetime = timezone.make_aware(
+                datetime.strptime(data_fim, '%Y-%m-%d') + timedelta(days=1) - timedelta(microseconds=1)
+            )
+            compras = compras.filter(criado_em__lte=fim_datetime)
         despesas = compras.aggregate(total=Sum('total'))['total'] or 0
 
         # Contas a pagar pagas

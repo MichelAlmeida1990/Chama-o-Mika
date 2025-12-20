@@ -12,6 +12,7 @@ const Vendas = () => {
     cliente: null,
     cliente_nome: '',
     desconto: 0,
+    forma_pagamento: 'DINHEIRO',
     status: 'CONCLUIDA',
     observacoes: '',
   });
@@ -26,6 +27,17 @@ const Vendas = () => {
     loadClientes();
   }, []);
 
+  // Recarrega produtos quando o modal é aberto
+  useEffect(() => {
+    if (showModal) {
+      console.log('Modal aberto, recarregando produtos via useEffect...');
+      // Pequeno delay para garantir que o modal está totalmente renderizado
+      setTimeout(() => {
+        loadProdutos();
+      }, 100);
+    }
+  }, [showModal]);
+
   const loadVendas = async () => {
     try {
       const response = await api.get('/api/vendas/');
@@ -37,10 +49,32 @@ const Vendas = () => {
 
   const loadProdutos = async () => {
     try {
-      const response = await api.get('/api/produtos/?ativo=true');
-      setProdutos(Array.isArray(response.data) ? response.data : response.data.results || []);
+      // Adiciona timestamp para evitar cache
+      const timestamp = new Date().getTime();
+      let allProdutos = [];
+      let nextUrl = `/api/produtos/?ativo=true&_t=${timestamp}`;
+      
+      // Buscar todas as páginas de produtos
+      while (nextUrl) {
+        const response = await api.get(nextUrl);
+        const data = response.data;
+        
+        if (Array.isArray(data)) {
+          // Se for array direto, não há paginação
+          allProdutos = data;
+          break;
+        } else {
+          // Se tiver paginação, adicionar resultados e buscar próxima página
+          allProdutos = allProdutos.concat(data.results || []);
+          nextUrl = data.next ? data.next.replace(/^https?:\/\/[^\/]+/, '') : null;
+        }
+      }
+      
+      setProdutos(allProdutos);
+      console.log('Produtos carregados:', allProdutos.length, allProdutos.map(p => p.nome));
     } catch (error) {
       console.error('Erro ao carregar produtos:', error);
+      setProdutos([]);
     }
   };
 
@@ -117,6 +151,7 @@ const Vendas = () => {
       cliente: null,
       cliente_nome: '',
       desconto: 0,
+      forma_pagamento: 'DINHEIRO',
       status: 'CONCLUIDA',
       observacoes: '',
     });
@@ -142,11 +177,28 @@ const Vendas = () => {
     return badges[status] || 'secondary';
   };
 
+  const getFormaPagamentoLabel = (forma) => {
+    const formas = {
+      'DINHEIRO': 'Dinheiro',
+      'CARTAO_CREDITO': 'Cartão Crédito',
+      'CARTAO_DEBITO': 'Cartão Débito',
+      'PIX': 'PIX',
+      'BOLETO': 'Boleto',
+      'TRANSFERENCIA': 'Transferência',
+      'OUTRO': 'Outro',
+    };
+    return formas[forma] || '-';
+  };
+
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Vendas</h2>
-        <Button variant="primary" onClick={() => { resetForm(); setShowModal(true); }}>
+        <Button variant="primary" onClick={() => { 
+          resetForm(); 
+          loadProdutos(); // Recarrega produtos antes de abrir o modal
+          setShowModal(true); 
+        }}>
           <FiPlus className="me-2" />
           Nova Venda
         </Button>
@@ -160,6 +212,7 @@ const Vendas = () => {
                 <th>Número</th>
                 <th>Cliente</th>
                 <th>Total</th>
+                <th>Forma de Pagamento</th>
                 <th>Status</th>
                 <th>Data</th>
                 <th>Ações</th>
@@ -171,6 +224,7 @@ const Vendas = () => {
                   <td>{venda.numero}</td>
                   <td>{venda.cliente_nome_display || venda.cliente_nome || venda.cliente || '-'}</td>
                   <td>R$ {parseFloat(venda.total).toFixed(2)}</td>
+                  <td>{getFormaPagamentoLabel(venda.forma_pagamento)}</td>
                   <td>
                     <Badge bg={getStatusBadge(venda.status)}>{venda.status}</Badge>
                   </td>
@@ -191,7 +245,15 @@ const Vendas = () => {
         </Card.Body>
       </Card>
 
-      <Modal show={showModal} onHide={() => { setShowModal(false); resetForm(); }} size="lg">
+      <Modal 
+        show={showModal} 
+        onEntered={() => {
+          console.log('Modal aberto, recarregando produtos...');
+          loadProdutos();
+        }}
+        onHide={() => { setShowModal(false); resetForm(); }} 
+        size="lg"
+      >
         <Modal.Header closeButton>
           <Modal.Title>Nova Venda</Modal.Title>
         </Modal.Header>
@@ -257,14 +319,37 @@ const Vendas = () => {
                 </Form.Group>
               </Col>
             </Row>
+            <Row>
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Forma de Pagamento *</Form.Label>
+                  <Form.Select
+                    value={formData.forma_pagamento}
+                    onChange={(e) => setFormData({ ...formData, forma_pagamento: e.target.value })}
+                    required
+                  >
+                    <option value="DINHEIRO">Dinheiro</option>
+                    <option value="CARTAO_CREDITO">Cartão de Crédito</option>
+                    <option value="CARTAO_DEBITO">Cartão de Débito</option>
+                    <option value="PIX">PIX</option>
+                    <option value="BOLETO">Boleto</option>
+                    <option value="TRANSFERENCIA">Transferência Bancária</option>
+                    <option value="OUTRO">Outro</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+            </Row>
 
             <Card className="mb-3">
               <Card.Header>Itens da Venda</Card.Header>
               <Card.Body>
                 <Row className="mb-3">
                   <Col md={6}>
-                    <Form.Select id="produto-select">
-                      <option value="">Selecione um produto...</option>
+                    <Form.Select 
+                      id="produto-select"
+                      key={`produto-select-${produtos.length}-${showModal}`}
+                    >
+                      <option value="">Selecione um produto... ({produtos.length} disponíveis)</option>
                       {produtos.map((prod) => (
                         <option key={prod.id} value={prod.id}>
                           {prod.nome} - {prod.tamanho} - {prod.cor} (Estoque: {prod.quantidade})
@@ -356,8 +441,17 @@ const Vendas = () => {
         <Modal.Body>
           {vendaSelecionada && (
             <div>
-              <p><strong>Cliente:</strong> {vendaSelecionada.cliente || '-'}</p>
+              <p><strong>Cliente:</strong> {vendaSelecionada.cliente_nome_display || vendaSelecionada.cliente_nome || vendaSelecionada.cliente || '-'}</p>
               <p><strong>Status:</strong> {vendaSelecionada.status}</p>
+              <p><strong>Forma de Pagamento:</strong> {
+                vendaSelecionada.forma_pagamento === 'DINHEIRO' ? 'Dinheiro' :
+                vendaSelecionada.forma_pagamento === 'CARTAO_CREDITO' ? 'Cartão de Crédito' :
+                vendaSelecionada.forma_pagamento === 'CARTAO_DEBITO' ? 'Cartão de Débito' :
+                vendaSelecionada.forma_pagamento === 'PIX' ? 'PIX' :
+                vendaSelecionada.forma_pagamento === 'BOLETO' ? 'Boleto' :
+                vendaSelecionada.forma_pagamento === 'TRANSFERENCIA' ? 'Transferência Bancária' :
+                vendaSelecionada.forma_pagamento === 'OUTRO' ? 'Outro' : '-'
+              }</p>
               <p><strong>Desconto:</strong> R$ {parseFloat(vendaSelecionada.desconto || 0).toFixed(2)}</p>
               <Table>
                 <thead>

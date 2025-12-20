@@ -6,3 +6,5 @@ class FinanceiroConfig(AppConfig):
     name = 'financeiro'
 
 
+
+

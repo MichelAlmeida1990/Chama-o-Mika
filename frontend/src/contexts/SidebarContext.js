@@ -11,7 +11,13 @@ export const useSidebar = () => {
 };
 
 export const SidebarProvider = ({ children }) => {
-  const [collapsed, setCollapsed] = useState(false);
+  // Inicializar como true (fechado) no mobile, false (aberto) no desktop
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth <= 991;
+    }
+    return false;
+  });
 
   const toggleSidebar = () => {
     setCollapsed(prev => !prev);
@@ -23,5 +29,7 @@ export const SidebarProvider = ({ children }) => {
     </SidebarContext.Provider>
   );
 };
+
+
 
 

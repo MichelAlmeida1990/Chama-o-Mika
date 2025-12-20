@@ -46,6 +46,16 @@ class Venda(models.Model):
         ('CONCLUIDA', 'Concluída'),
         ('CANCELADA', 'Cancelada'),
     ]
+    
+    FORMA_PAGAMENTO_CHOICES = [
+        ('DINHEIRO', 'Dinheiro'),
+        ('CARTAO_CREDITO', 'Cartão de Crédito'),
+        ('CARTAO_DEBITO', 'Cartão de Débito'),
+        ('PIX', 'PIX'),
+        ('BOLETO', 'Boleto'),
+        ('TRANSFERENCIA', 'Transferência Bancária'),
+        ('OUTRO', 'Outro'),
+    ]
 
     numero = models.CharField(max_length=20, unique=True, editable=False)
     cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True, blank=True, related_name='vendas')
@@ -53,6 +63,7 @@ class Venda(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     desconto = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'),
                                    validators=[MinValueValidator(Decimal('0.00'))])
+    forma_pagamento = models.CharField(max_length=20, choices=FORMA_PAGAMENTO_CHOICES, default='DINHEIRO')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='CONCLUIDA')
     observacoes = models.TextField(blank=True)
     usuario = models.ForeignKey('auth.User', on_delete=models.PROTECT)

@@ -31,8 +31,26 @@ const Produtos = () => {
 
   const loadProdutos = async () => {
     try {
-      const response = await api.get('/api/produtos/');
-      setProdutos(Array.isArray(response.data) ? response.data : response.data.results || []);
+      let allProdutos = [];
+      let nextUrl = '/api/produtos/';
+      
+      // Buscar todas as páginas de produtos
+      while (nextUrl) {
+        const response = await api.get(nextUrl);
+        const data = response.data;
+        
+        if (Array.isArray(data)) {
+          // Se for array direto, não há paginação
+          allProdutos = data;
+          break;
+        } else {
+          // Se tiver paginação, adicionar resultados e buscar próxima página
+          allProdutos = allProdutos.concat(data.results || []);
+          nextUrl = data.next ? data.next.replace(/^https?:\/\/[^\/]+/, '') : null;
+        }
+      }
+      
+      setProdutos(allProdutos);
     } catch (error) {
       console.error('Erro ao carregar produtos:', error);
     }
@@ -218,7 +236,16 @@ const Produtos = () => {
               <Form.Label>Categoria *</Form.Label>
               <Form.Select
                 value={formData.categoria}
-                onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
+                onChange={(e) => {
+                  const novaCategoria = e.target.value;
+                  const categoriaSelecionada = categorias.find(cat => cat.id === parseInt(novaCategoria));
+                  const isTenis = categoriaSelecionada?.nome?.toLowerCase().includes('tenis') || 
+                                 categoriaSelecionada?.nome?.toLowerCase().includes('tênis');
+                  
+                  // Resetar tamanho quando mudar categoria
+                  const novoTamanho = isTenis ? '38' : 'M';
+                  setFormData({ ...formData, categoria: novaCategoria, tamanho: novoTamanho });
+                }}
                 required
               >
                 <option value="">Selecione...</option>
@@ -248,13 +275,32 @@ const Produtos = () => {
                     onChange={(e) => setFormData({ ...formData, tamanho: e.target.value })}
                     required
                   >
-                    <option value="PP">PP</option>
-                    <option value="P">P</option>
-                    <option value="M">M</option>
-                    <option value="G">G</option>
-                    <option value="GG">GG</option>
-                    <option value="XG">XG</option>
-                    <option value="XXG">XXG</option>
+                    {(() => {
+                      const categoriaSelecionada = categorias.find(cat => cat.id === parseInt(formData.categoria));
+                      const isTenis = categoriaSelecionada?.nome?.toLowerCase().includes('tenis') || 
+                                     categoriaSelecionada?.nome?.toLowerCase().includes('tênis');
+                      
+                      if (isTenis) {
+                        // Tamanhos numéricos para tênis (34 a 45)
+                        return Array.from({ length: 12 }, (_, i) => {
+                          const numero = 34 + i;
+                          return <option key={numero} value={numero.toString()}>{numero}</option>;
+                        });
+                      } else {
+                        // Tamanhos de roupa (PP, P, M, G, etc.)
+                        return (
+                          <>
+                            <option value="PP">PP</option>
+                            <option value="P">P</option>
+                            <option value="M">M</option>
+                            <option value="G">G</option>
+                            <option value="GG">GG</option>
+                            <option value="XG">XG</option>
+                            <option value="XXG">XXG</option>
+                          </>
+                        );
+                      }
+                    })()}
                   </Form.Select>
                 </Form.Group>
               </Col>

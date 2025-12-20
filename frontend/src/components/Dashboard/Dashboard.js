@@ -48,25 +48,66 @@ const Dashboard = () => {
 
   useEffect(() => {
     loadStats();
+    
+    // Recarrega os dados a cada 30 segundos
+    const interval = setInterval(() => {
+      loadStats();
+    }, 30000);
+    
+    // Recarrega quando a página ganha foco (usuário volta para a aba)
+    const handleFocus = () => {
+      loadStats();
+    };
+    window.addEventListener('focus', handleFocus);
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
 
   const loadStats = async () => {
     try {
-      // Total de produtos
-      const produtosRes = await api.get('/api/produtos/');
-      const produtos = Array.isArray(produtosRes.data) ? produtosRes.data : produtosRes.data.results || [];
-      const totalProdutos = produtosRes.data.count || produtos.length;
-      const produtosAtivos = produtos.filter(p => p.ativo).length;
+      setLoading(true);
+      
+      // Fazer requisições em paralelo para melhor performance
+      const [
+        produtosRes,
+        estoqueBaixoRes,
+        categoriasRes,
+        vendasHojeRes,
+        relatorioRes
+      ] = await Promise.allSettled([
+        api.get('/api/produtos/'),
+        api.get('/api/produtos/estoque_baixo/'),
+        api.get('/api/categorias/'),
+        api.get(`/api/vendas/relatorio/?data_inicio=${new Date().toISOString().split('T')[0]}&data_fim=${new Date().toISOString().split('T')[0]}`),
+        api.get(`/api/relatorios/fluxo_caixa/?data_inicio=${new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]}&data_fim=${new Date().toISOString().split('T')[0]}`)
+      ]);
 
-      // Produtos com estoque baixo
-      const estoqueBaixoRes = await api.get('/api/produtos/estoque_baixo/');
-      const estoqueBaixo = estoqueBaixoRes.data.length || 0;
-      setProdutosEstoqueBaixo(estoqueBaixoRes.data.slice(0, 5) || []);
+      // Processar produtos
+      let produtos = [];
+      let totalProdutos = 0;
+      let produtosAtivos = 0;
+      if (produtosRes.status === 'fulfilled') {
+        produtos = Array.isArray(produtosRes.value.data) ? produtosRes.value.data : produtosRes.value.data.results || [];
+        totalProdutos = produtosRes.value.data.count || produtos.length;
+        produtosAtivos = produtos.filter(p => p.ativo).length;
+      }
 
-      // Categorias
-      const categoriasRes = await api.get('/api/categorias/');
-      const categoriasData = Array.isArray(categoriasRes.data) ? categoriasRes.data : categoriasRes.data.results || [];
-      setCategorias(categoriasData);
+      // Processar estoque baixo
+      let estoqueBaixo = 0;
+      if (estoqueBaixoRes.status === 'fulfilled') {
+        estoqueBaixo = estoqueBaixoRes.value.data.length || 0;
+        setProdutosEstoqueBaixo(estoqueBaixoRes.value.data.slice(0, 5) || []);
+      }
+
+      // Processar categorias
+      let categoriasData = [];
+      if (categoriasRes.status === 'fulfilled') {
+        categoriasData = Array.isArray(categoriasRes.value.data) ? categoriasRes.value.data : categoriasRes.value.data.results || [];
+        setCategorias(categoriasData);
+      }
 
       // Contar produtos por categoria
       const contagem = {};
@@ -79,14 +120,15 @@ const Dashboard = () => {
       setProdutosPorCategoria(contagem);
 
       // Vendas de hoje
-      const hoje = new Date().toISOString().split('T')[0];
-      const vendasRes = await api.get(`/api/vendas/relatorio/?data_inicio=${hoje}&data_fim=${hoje}`);
-      const vendasHoje = vendasRes.data.quantidade_vendas || 0;
+      let vendasHoje = 0;
+      if (vendasHojeRes.status === 'fulfilled') {
+        vendasHoje = vendasHojeRes.value.data.quantidade_vendas || 0;
+      }
 
-      // Vendas da semana (últimos 7 dias)
+      // Vendas da semana (últimos 7 dias) - fazer em paralelo
       const hojeObj = new Date();
       const diasSemana = [];
-      const vendasPorDia = [];
+      const vendasPorDiaPromises = [];
       
       for (let i = 6; i >= 0; i--) {
         const data = new Date(hojeObj);
@@ -94,32 +136,49 @@ const Dashboard = () => {
         const dataStr = data.toISOString().split('T')[0];
         const diaNome = data.toLocaleDateString('pt-BR', { weekday: 'short' });
         diasSemana.push(diaNome);
-        
-        try {
-          const vendasDiaRes = await api.get(`/api/vendas/relatorio/?data_inicio=${dataStr}&data_fim=${dataStr}`);
-          vendasPorDia.push(parseFloat(vendasDiaRes.data.total_vendas || 0));
-        } catch {
-          vendasPorDia.push(0);
-        }
+        vendasPorDiaPromises.push(
+          api.get(`/api/vendas/relatorio/?data_inicio=${dataStr}&data_fim=${dataStr}`)
+            .then(res => parseFloat(res.data.total_vendas || 0))
+            .catch(() => 0)
+        );
       }
       
+      const vendasPorDia = await Promise.all(vendasPorDiaPromises);
       setVendasSemana({ labels: diasSemana, data: vendasPorDia });
 
-      // Vendas recentes
-      const vendasRecentesRes = await api.get('/api/vendas/?ordering=-criado_em');
-      const vendasRecentesData = Array.isArray(vendasRecentesRes.data) ? vendasRecentesRes.data : vendasRecentesRes.data.results || [];
-      setVendasRecentes(vendasRecentesData.slice(0, 5));
+      // Vendas recentes - buscar todas as páginas
+      let allVendasRecentes = [];
+      let nextUrl = '/api/vendas/?ordering=-criado_em';
+      
+      try {
+        while (nextUrl && allVendasRecentes.length < 5) {
+          const vendasRecentesRes = await api.get(nextUrl);
+          const data = vendasRecentesRes.data;
+          
+          if (Array.isArray(data)) {
+            allVendasRecentes = data.slice(0, 5);
+            break;
+          } else {
+            allVendasRecentes = allVendasRecentes.concat(data.results || []);
+            nextUrl = data.next ? data.next.replace(/^https?:\/\/[^\/]+/, '') : null;
+            if (allVendasRecentes.length >= 5) break;
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao carregar vendas recentes:', error);
+      }
+      
+      setVendasRecentes(allVendasRecentes.slice(0, 5));
 
       // Receitas do mês
-      const primeiroDiaMes = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-        .toISOString().split('T')[0];
-      const ultimoDiaMes = new Date().toISOString().split('T')[0];
-      const relatorioRes = await api.get(
-        `/api/relatorios/fluxo_caixa/?data_inicio=${primeiroDiaMes}&data_fim=${ultimoDiaMes}`
-      );
-      const receitasMes = relatorioRes.data.receitas?.total || 0;
-      const totalVendas = relatorioRes.data.receitas?.vendas || 0;
-      const totalCompras = relatorioRes.data.despesas?.compras || 0;
+      let receitasMes = 0;
+      let totalVendas = 0;
+      let totalCompras = 0;
+      if (relatorioRes.status === 'fulfilled') {
+        receitasMes = relatorioRes.value.data.receitas?.total || 0;
+        totalVendas = relatorioRes.value.data.receitas?.vendas || 0;
+        totalCompras = relatorioRes.value.data.despesas?.compras || 0;
+      }
 
       setStats({
         totalProdutos,

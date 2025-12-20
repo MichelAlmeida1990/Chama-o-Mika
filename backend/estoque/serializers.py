@@ -49,3 +49,5 @@ class MovimentacaoEstoqueSerializer(serializers.ModelSerializer):
         return data
 
 
+
+

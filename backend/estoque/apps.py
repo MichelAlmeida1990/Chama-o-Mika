@@ -6,3 +6,5 @@ class EstoqueConfig(AppConfig):
     name = 'estoque'
 
 
+
+

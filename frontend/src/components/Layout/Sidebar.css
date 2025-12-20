@@ -297,13 +297,17 @@
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
   z-index: 998;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
   opacity: 0;
+  visibility: hidden;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .sidebar-overlay.active {
   display: block;
   opacity: 1;
+  visibility: visible;
 }
 
 /* Responsividade */
@@ -335,12 +339,22 @@
   .sidebar {
     transform: translateX(-100%);
     z-index: 999;
+    width: 250px;
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar:not(.collapsed) {
+    transform: translateX(0);
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
   }
 
   .sidebar.collapsed {
-    transform: translateX(0);
-    width: 250px;
-    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
+    transform: translateX(-100%);
+  }
+  
+  .sidebar-overlay.active {
+    display: block;
+    z-index: 998;
   }
 
   .sidebar-overlay.active {

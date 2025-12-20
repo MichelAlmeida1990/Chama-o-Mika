@@ -11,3 +11,5 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'gestao.settings')
 application = get_asgi_application()
 
 
+
+
