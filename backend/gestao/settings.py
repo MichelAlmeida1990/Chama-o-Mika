@@ -4,6 +4,7 @@ Django settings for gestao project.
 
 from pathlib import Path
 import os
+import re
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -180,6 +181,13 @@ for origin in cors_origins_raw.split(','):
             origin = f'https://{origin}'
         CORS_ALLOWED_ORIGINS.append(origin)
 
+# Adicionar padrões do Vercel automaticamente em produção
+# Permitir todas as URLs do Vercel (produção e previews)
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    re.compile(r'^https://chama-o-mika.*\.vercel\.app$'),
+    re.compile(r'^https://.*\.vercel\.app$'),  # Qualquer projeto Vercel (mais permissivo)
+]
+
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
     'accept',
@@ -217,7 +225,16 @@ else:
     CSRF_COOKIE_SAMESITE = 'None'
     CSRF_COOKIE_SECURE = True
 
-CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS.copy()  # Confia nos mesmos origens do CORS
+# CSRF_TRUSTED_ORIGINS precisa de URLs específicas (não suporta regex)
+# Adicionar URLs do Vercel manualmente
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS.copy()
+# Adicionar padrões comuns do Vercel
+vercel_urls = [
+    'https://chama-o-mika.vercel.app',
+]
+for url in vercel_urls:
+    if url not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(url)
 
 # Security settings for production
 if not DEBUG:
