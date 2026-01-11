@@ -5,12 +5,27 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import login_view, logout_view, user_view
+from django.http import JsonResponse
+from .views import login_view, logout_view, user_view, csrf_token_view
+
+def api_root(request):
+    """API root endpoint"""
+    return JsonResponse({
+        'message': 'Chama o Mika API',
+        'version': '1.0.0',
+        'endpoints': {
+            'auth': '/api/auth/',
+            'estoque': '/api/estoque/',
+            'financeiro': '/api/financeiro/',
+        }
+    })
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', api_root, name='api_root'),
     path('api/', include('estoque.urls')),
     path('api/', include('financeiro.urls')),
+    path('api/auth/csrf-token/', csrf_token_view, name='csrf-token'),
     path('api/auth/login/', login_view, name='login'),
     path('api/auth/logout/', logout_view, name='logout'),
     path('api/auth/user/', user_view, name='user'),

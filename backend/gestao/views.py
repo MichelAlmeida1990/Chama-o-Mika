@@ -1,10 +1,19 @@
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods
+from django.middleware.csrf import get_token
 import json
 
 
+@ensure_csrf_cookie
+@require_http_methods(["GET"])
+def csrf_token_view(request):
+    """View para obter CSRF token"""
+    return JsonResponse({'csrfToken': get_token(request)})
+
+
+@ensure_csrf_cookie
 @csrf_exempt
 @require_http_methods(["POST"])
 def login_view(request):
@@ -45,6 +54,8 @@ def logout_view(request):
     return JsonResponse({'success': True})
 
 
+@ensure_csrf_cookie
+@csrf_exempt
 @require_http_methods(["GET"])
 def user_view(request):
     """View para obter informações do usuário logado"""
@@ -53,8 +64,12 @@ def user_view(request):
             'id': request.user.id,
             'username': request.user.username,
             'email': request.user.email,
+            'is_authenticated': True,
         })
     else:
-        return JsonResponse({'error': 'Não autenticado'}, status=401)
+        return JsonResponse({
+            'is_authenticated': False,
+            'error': 'Não autenticado'
+        }, status=401)
 
 

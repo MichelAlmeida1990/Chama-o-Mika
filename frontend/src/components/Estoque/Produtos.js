@@ -19,10 +19,12 @@ const Produtos = () => {
     preco_custo: 0,
     preco_venda: 0,
     descricao: '',
+    imagem: null,
     ativo: true,
   });
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
     loadProdutos();
@@ -70,10 +72,29 @@ const Produtos = () => {
     setError('');
 
     try {
+      const formDataToSend = new FormData();
+      
+      // Adicionar campos ao FormData
+      Object.keys(formData).forEach(key => {
+        if (key === 'imagem' && formData[key]) {
+          formDataToSend.append('imagem', formData[key]);
+        } else if (key !== 'imagem') {
+          formDataToSend.append(key, formData[key]);
+        }
+      });
+
       if (editingProduto) {
-        await api.put(`/api/produtos/${editingProduto.id}/`, formData);
+        await api.put(`/api/produtos/${editingProduto.id}/`, formDataToSend, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
       } else {
-        await api.post('/api/produtos/', formData);
+        await api.post('/api/produtos/', formDataToSend, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
       }
       setShowModal(false);
       resetForm();
@@ -96,8 +117,10 @@ const Produtos = () => {
       preco_custo: produto.preco_custo,
       preco_venda: produto.preco_venda,
       descricao: produto.descricao || '',
+      imagem: null,
       ativo: produto.ativo,
     });
+    setImagePreview(produto.imagem || null);
     setShowModal(true);
   };
 
@@ -125,8 +148,24 @@ const Produtos = () => {
       preco_custo: 0,
       preco_venda: 0,
       descricao: '',
+      imagem: null,
       ativo: true,
     });
+    setImagePreview(null);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData({ ...formData, imagem: file });
+      
+      // Criar preview da imagem
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const filteredProdutos = produtos.filter((produto) =>
@@ -159,6 +198,7 @@ const Produtos = () => {
           <Table responsive>
             <thead>
               <tr>
+                <th>Imagem</th>
                 <th>Nome</th>
                 <th>Categoria</th>
                 <th>Tamanho</th>
@@ -172,6 +212,36 @@ const Produtos = () => {
             <tbody>
               {filteredProdutos.map((produto) => (
                 <tr key={produto.id}>
+                  <td>
+                    {produto.imagem ? (
+                      <img 
+                        src={produto.imagem} 
+                        alt={produto.nome}
+                        style={{ 
+                          width: '50px', 
+                          height: '50px', 
+                          objectFit: 'cover',
+                          borderRadius: '4px'
+                        }}
+                      />
+                    ) : (
+                      <div 
+                        style={{ 
+                          width: '50px', 
+                          height: '50px', 
+                          backgroundColor: '#f0f0f0',
+                          borderRadius: '4px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#999',
+                          fontSize: '12px'
+                        }}
+                      >
+                        Sem img
+                      </div>
+                    )}
+                  </td>
                   <td>{produto.nome}</td>
                   <td>{produto.categoria_nome || 'N/A'}</td>
                   <td>{produto.tamanho}</td>
@@ -388,6 +458,31 @@ const Produtos = () => {
                 value={formData.descricao}
                 onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
               />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Imagem do Produto</Form.Label>
+              <Form.Control
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+              {imagePreview && (
+                <div className="mt-3">
+                  <p className="mb-2">Preview:</p>
+                  <img 
+                    src={imagePreview} 
+                    alt="Preview"
+                    style={{ 
+                      maxWidth: '200px', 
+                      maxHeight: '200px',
+                      objectFit: 'cover',
+                      borderRadius: '4px',
+                      border: '1px solid #ddd'
+                    }}
+                  />
+                </div>
+              )}
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>

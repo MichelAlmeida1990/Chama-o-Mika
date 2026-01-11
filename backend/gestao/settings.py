@@ -17,11 +17,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key-change-in-production')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = True  # Forçar True para desenvolvimento
 
 # Parse ALLOWED_HOSTS from environment variable or use default
 # Remove espaços em branco e filtra valores vazios
-ALLOWED_HOSTS = [host.strip() for host in os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') if host.strip()]
+ALLOWED_HOSTS = [host.strip() for host in os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,testserver').split(',') if host.strip()]
 
 
 # Application definition
@@ -156,6 +156,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -211,7 +212,7 @@ SESSION_COOKIE_AGE = 86400  # 24 horas
 
 # Configurações de cookies para desenvolvimento e produção
 if DEBUG:
-    # Desenvolvimento: permite HTTP e SameSite Lax
+    # Desenvolvimento: permite HTTP e SameSite Lax para localhost
     SESSION_COOKIE_SAMESITE = 'Lax'
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_HTTPONLY = False
@@ -228,6 +229,8 @@ else:
 # CSRF_TRUSTED_ORIGINS precisa de URLs específicas (não suporta regex)
 # Adicionar URLs do Vercel manualmente
 CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS.copy()
+# Adicionar frontend local
+CSRF_TRUSTED_ORIGINS.append('http://localhost:3000')
 # Adicionar padrões comuns do Vercel
 vercel_urls = [
     'https://chama-o-mika.vercel.app',

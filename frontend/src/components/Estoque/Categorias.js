@@ -27,17 +27,26 @@ const Categorias = () => {
     e.preventDefault();
     setError('');
 
+    console.log('Enviando categoria:', formData);
+    console.log('Editando:', editingCategoria);
+
     try {
+      let response;
       if (editingCategoria) {
-        await api.put(`/api/categorias/${editingCategoria.id}/`, formData);
+        response = await api.put(`/api/categorias/${editingCategoria.id}/`, formData);
+        console.log('Resposta PUT:', response.status, response.data);
       } else {
-        await api.post('/api/categorias/', formData);
+        response = await api.post('/api/categorias/', formData);
+        console.log('Resposta POST:', response.status, response.data);
       }
       setShowModal(false);
       resetForm();
       loadCategorias();
     } catch (error) {
-      setError(error.response?.data?.message || 'Erro ao salvar categoria');
+      console.error('Erro completo:', error);
+      console.error('Response:', error.response);
+      console.error('Data:', error.response?.data);
+      setError(error.response?.data?.detail || error.response?.data?.message || 'Erro ao salvar categoria');
     }
   };
 
@@ -158,6 +167,7 @@ const Categorias = () => {
 };
 
 export default Categorias;
+
 
 
 

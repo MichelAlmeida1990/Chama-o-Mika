@@ -15,6 +15,8 @@ api.interceptors.request.use(
     if (csrftoken) {
       config.headers['X-CSRFToken'] = csrftoken;
     }
+    // Garantir que cookies sejam enviados
+    config.withCredentials = true;
     return config;
   },
   (error) => {
@@ -28,6 +30,9 @@ let isRedirecting = false;
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.error('API Error:', error);
+    console.error('Response:', error.response);
+    
     if (error.response?.status === 401) {
       // Redirecionar para login se não autenticado, mas apenas se não estiver já na página de login
       // e se não estiver já redirecionando (evita loops)
