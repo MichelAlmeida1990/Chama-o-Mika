@@ -8,7 +8,7 @@ import json
 def deploy_users_get():
     """Criar usuários via GET (sem POST)"""
     
-    base_url = "https://chama-o-mika.vercel.app"
+    base_url = "https://smartmanager.vercel.app"
     
     print("=== TENTANDO DEPLOY VIA GET ===")
     print(f"URL: {base_url}")

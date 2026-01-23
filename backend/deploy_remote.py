@@ -10,7 +10,7 @@ import time
 def create_users_remotely():
     """Criar usuários no deploy via requisição HTTP"""
     
-    base_url = "https://chama-o-mika.vercel.app"
+    base_url = "https://smartmanager.vercel.app"
     deploy_url = f"{base_url}/deploy/create-users/"
     
     print("=== CRIANDO USUÁRIOS REMOTAMENTE ===")
@@ -60,7 +60,7 @@ def create_users_remotely():
                     
                     print()
                     print("🚀 AGUARDE 1 MINUTO E TENTE O LOGIN!")
-                    print("📱 Acesse: https://chama-o-mika.vercel.app")
+                    print("📱 Acesse: https://smartmanager.vercel.app")
                     print()
                     print("⏰ AGUARDANDO 60 SEGUNDOS PARA VERIFICAR...")
                     time.sleep(60)
@@ -96,7 +96,7 @@ def create_users_remotely():
 def check_current_status():
     """Verificar status atual do deploy"""
     
-    base_url = "https://chama-o-mika.vercel.app"
+    base_url = "https://smartmanager.vercel.app"
     status_url = f"{base_url}/deploy/status/"
     
     print("=== VERIFICANDO STATUS ATUAL ===")

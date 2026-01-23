@@ -53,7 +53,7 @@ def test_endpoint(url, method='GET', data=None, description=''):
 def test_vercel_endpoints():
     """Testar todos os endpoints importantes"""
     
-    base_url = "https://chama-o-mika.vercel.app"
+    base_url = "https://smartmanager.vercel.app"
     
     print("=== TESTANDO ENDPOINTS DA API VERCEL ===")
     print(f"Base URL: {base_url}")

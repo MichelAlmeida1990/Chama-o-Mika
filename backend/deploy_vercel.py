@@ -1,6 +1,6 @@
 """
 Script específico para criar usuários no deploy da Vercel
-URL: https://chama-o-mika.vercel.app
+URL: https://smartmanager.vercel.app
 """
 
 import os
@@ -41,7 +41,7 @@ def create_vercel_users():
     ]
     
     print("=== CRIANDO USUÁRIOS PARA DEPLOY VERCEL ===")
-    print("URL: https://chama-o-mika.vercel.app")
+    print("URL: https://smartmanager.vercel.app")
     print()
     
     # Desativar validação de senha temporariamente
@@ -90,7 +90,7 @@ def test_api_connection():
     print("\n=== TESTANDO API DO DEPLOY ===")
     
     # Testar endpoint de login
-    login_url = "https://chama-o-mika.vercel.app/api/auth/login/"
+    login_url = "https://smartmanager.vercel.app/api/auth/login/"
     
     test_credentials = [
         ('admin', 'mika123'),

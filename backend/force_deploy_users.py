@@ -17,7 +17,7 @@ def force_create_users():
     """Forçar criação de usuários no deploy"""
     
     print("=== FORÇANDO CRIAÇÃO DE USUÁRIOS NO DEPLOY ===")
-    print("URL: https://chama-o-mika.vercel.app")
+    print("URL: https://smartmanager.vercel.app")
     print()
     
     # Limpar tabela de usuários (cuidado!)
@@ -119,7 +119,7 @@ def force_create_users():
     print("3. rafael@chamaomika.com / mika123")
     print()
     print("🚀 AGUARDE 1-2 MINUTOS E TENTE NOVAMENTE!")
-    print("📱 Acesse: https://chama-o-mika.vercel.app")
+    print("📱 Acesse: https://smartmanager.vercel.app")
     
     return True
 

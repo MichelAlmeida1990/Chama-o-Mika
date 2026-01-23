@@ -2,8 +2,8 @@
 
 ## Problema Identificado
 
-❌ **URL Incorreta:** `chama-o-mika-backend.onrender.com`
-✅ **URL Correta:** `https://chama-o-mika.vercel.app/api`
+❌ **URL Incorreta:** `smartmanager-backend.onrender.com`
+✅ **URL Correta:** `https://smartmanager.vercel.app/api`
 
 ## 🚨 Erros no Console
 
@@ -20,7 +20,7 @@
 **Conteúdo:**
 ```
 # Ambiente de Produção - Vercel
-REACT_APP_API_URL=https://chama-o-mika.vercel.app/api
+REACT_APP_API_URL=https://smartmanager.vercel.app/api
 ```
 
 ### 2. Atualizar package.json
@@ -61,7 +61,7 @@ Após corrigir:
 | Ambiente | URL da API |
 |-----------|-------------|
 | Desenvolvimento | http://localhost:8000 |
-| Produção | https://chama-o-mika.vercel.app/api |
+| Produção | https://smartmanager.vercel.app/api |
 
 ## ⚡ Ação Imediata
 

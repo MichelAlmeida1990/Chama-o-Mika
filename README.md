@@ -1,4 +1,4 @@
-# Sistema de Gestão de Estoque e Financeiro para Roupas
+# SmartManager - Sistema de Gestão de Estoque e Financeiro
 
 Sistema completo de gestão de estoque e financeiro desenvolvido com Django (backend) e React (frontend).
 

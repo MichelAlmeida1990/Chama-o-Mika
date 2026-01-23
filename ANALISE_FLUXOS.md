@@ -1,4 +1,4 @@
-# 📊 Análise de Fluxos e Sugestões de Melhorias - Chama o Mika
+# 📊 Análise de Fluxos e Sugestões de Melhorias - SmartManager
 
 ## 🎯 Visão Geral do Sistema Atual
 

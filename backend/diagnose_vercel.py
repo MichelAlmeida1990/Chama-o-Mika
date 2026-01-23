@@ -8,7 +8,7 @@ import json
 def diagnose_vercel():
     """Diagnosticar problemas no deploy Vercel"""
     
-    base_url = "https://chama-o-mika.vercel.app"
+    base_url = "https://smartmanager.vercel.app"
     
     print("=== DIAGNÓSTICO COMPLETO DO DEPLOY VERCEL ===")
     print(f"URL: {base_url}")

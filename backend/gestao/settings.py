@@ -185,7 +185,7 @@ for origin in cors_origins_raw.split(','):
 # Adicionar padrões do Vercel automaticamente em produção
 # Permitir todas as URLs do Vercel (produção e previews)
 CORS_ALLOWED_ORIGIN_REGEXES = [
-    re.compile(r'^https://chama-o-mika.*\.vercel\.app$'),
+    re.compile(r'^https://smartmanager.*\.vercel\.app$'),
     re.compile(r'^https://.*\.vercel\.app$'),  # Qualquer projeto Vercel (mais permissivo)
 ]
 
@@ -233,7 +233,7 @@ CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS.copy()
 CSRF_TRUSTED_ORIGINS.append('http://localhost:3000')
 # Adicionar padrões comuns do Vercel
 vercel_urls = [
-    'https://chama-o-mika.vercel.app',
+    'https://smartmanager.vercel.app',
 ]
 for url in vercel_urls:
     if url not in CSRF_TRUSTED_ORIGINS:

@@ -10,10 +10,10 @@ def test_vercel_login():
     """Testar login na API do Vercel"""
     
     print("=== TESTANDO API DO DEPLOY VERCEL ===")
-    print("URL: https://chama-o-mika.vercel.app")
+    print("URL: https://smartmanager.vercel.app")
     print()
     
-    login_url = "https://chama-o-mika.vercel.app/api/auth/login/"
+    login_url = "https://smartmanager.vercel.app/api/auth/login/"
     
     test_credentials = [
         ('admin', 'mika123'),
@@ -64,7 +64,7 @@ def test_vercel_login():
     
     print(f"\n=== INSTRUÇÕES PARA O DEPLOY ===")
     print("1. Execute 'deploy_vercel.py' no servidor Vercel")
-    print("2. Acesse: https://chama-o-mika.vercel.app")
+    print("2. Acesse: https://smartmanager.vercel.app")
     print("3. Use as credenciais acima para login")
     print("4. Se ainda falhar, verifique os logs do Vercel")
 

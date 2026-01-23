@@ -24,7 +24,7 @@ git push origin main
 **Aguarde 2-3 minutos** depois do push e verifique:
 1. **Dashboard Vercel:** https://vercel.com/dashboard
 2. **Build Logs:** Verifique se não há erros
-3. **URL Test:** https://chama-o-mika.vercel.app/api/
+3. **Acesse:** https://smartmanager.vercel.app/api/
 
 ### 3. Criar Usuários (se necessário)
 
@@ -32,14 +32,14 @@ git push origin main
 
 **Opção A - Via Admin Django:**
 ```
-Acesse: https://chama-o-mika.vercel.app/admin/
+Acesse: https://smartmanager.vercel.app/admin/
 User: admin
 Password: mika123
 ```
 
 **Opção B - Via Endpoint (se disponível):**
 ```bash
-curl -X POST https://chama-o-mika.vercel.app/deploy/create-users/ \
+curl -X POST https://smartmanager.vercel.app/deploy/create-users/ \
   -H "Content-Type: application/json" \
   -d '{"deploy_key": "chamaomika2026deploy"}'
 ```

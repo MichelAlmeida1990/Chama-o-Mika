@@ -116,12 +116,12 @@ const Sidebar = () => {
           </button>
           <div className="navbar-brand-top">
             <img 
-              src="/logo-mika.png" 
-              alt="Chama o Mika" 
+              src="/smartmanager-logo.png" 
+              alt="SmartManager" 
               className="navbar-logo"
               style={{ height: '40px', marginRight: '10px' }}
             />
-            <span>Chama o Mika</span>
+            <span>SmartManager</span>
           </div>
           <div className="navbar-user-top">
             <span className="user-greeting">
@@ -145,8 +145,8 @@ const Sidebar = () => {
             {!collapsed && (
               <div className="sidebar-logo-container">
                 <img 
-                  src="/logo-mika.png" 
-                  alt="Chama o Mika" 
+                  src="/smartmanager-logo.png" 
+                  alt="SmartManager" 
                   className="sidebar-logo"
                 />
               </div>

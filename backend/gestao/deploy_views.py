@@ -124,7 +124,7 @@ def check_deploy_status_view(request):
             'success': True,
             'user_count': len(user_list),
             'users': user_list,
-            'deploy_url': 'https://chama-o-mika.vercel.app',
+            'deploy_url': 'https://smartmanager.vercel.app',
             'api_working': True
         })
         

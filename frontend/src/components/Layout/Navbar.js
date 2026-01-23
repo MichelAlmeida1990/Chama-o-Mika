@@ -39,7 +39,7 @@ const Navbar = () => {
       <Container fluid>
         <BootstrapNavbar.Brand as={Link} to="/" className="navbar-brand-custom">
           <FiPackage className="navbar-brand-icon" />
-          <span>Chama o Mika</span>
+          <span>SmartManager</span>
         </BootstrapNavbar.Brand>
         
         <BootstrapNavbar.Toggle 

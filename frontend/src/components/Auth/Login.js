@@ -29,17 +29,16 @@ const Login = () => {
   };
 
   return (
-    <Container className="d-flex justify-content-center align-items-center login-container" style={{ minHeight: '80vh', padding: '1rem' }}>
-      <Card className="login-card" style={{ width: '100%', maxWidth: '400px' }}>
+    <Container className="login-container">
+      <Card className="login-card">
         <Card.Header className="text-center">
           <div className="mb-3">
             <img 
-              src="/logo-mika.png" 
-              alt="Chama o Mika" 
-              style={{ maxWidth: '150px', height: 'auto' }}
+              src="/smartmanager-logo.png" 
+              alt="SmartManager" 
             />
           </div>
-          <h3>Chama o Mika</h3>
+          <h3>SmartManager</h3>
           <p className="mb-0">Faça login para continuar</p>
         </Card.Header>
         <Card.Body>
@@ -49,6 +48,7 @@ const Login = () => {
               <Form.Label>Usuário</Form.Label>
               <Form.Control
                 type="text"
+                placeholder="Digite seu usuário"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
@@ -59,6 +59,7 @@ const Login = () => {
               <Form.Label>Senha</Form.Label>
               <Form.Control
                 type="password"
+                placeholder="Digite sua senha"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required

@@ -1,6 +1,6 @@
-# 🚀 Guia de Deploy - Chama o Mika
+# 🚀 Guia de Deploy - SmartManager
 
-Este guia explica como fazer o deploy do sistema **Chama o Mika** no **Render** (backend) e **Vercel** (frontend).
+Este guia explica como fazer o deploy do sistema **SmartManager** no **Render** (backend) e **Vercel** (frontend).
 
 ## 📋 Pré-requisitos
 
@@ -22,7 +22,7 @@ Este guia explica como fazer o deploy do sistema **Chama o Mika** no **Render** 
 ### 2. Configurações do Serviço
 
 **Configurações Básicas:**
-- **Name**: `chama-o-mika-backend` (ou o nome que preferir)
+- **Name**: `smartmanager-backend` (ou o nome que preferir)
 - **Environment**: `Python 3`
 - **Root Directory**: `backend` ⚠️ **IMPORTANTE: Configure isso primeiro!**
 - **Build Command**: `pip install -r requirements.txt && python manage.py collectstatic --noinput --clear && python manage.py migrate --noinput`
@@ -75,7 +75,7 @@ E adicione `dj-database-url==2.1.0` ao `requirements.txt`.
 
 1. Clique em **Create Web Service**
 2. Aguarde o build e deploy
-3. Anote a URL do serviço (ex: `https://chama-o-mika-backend.onrender.com`)
+3. Anote a URL do serviço (ex: `https://smartmanager-backend.onrender.com`)
 
 ### 5. Criar Superusuário
 
@@ -143,7 +143,7 @@ REACT_APP_API_URL=https://seu-backend.onrender.com
 
 1. Clique em **Deploy**
 2. Aguarde o build e deploy
-3. Anote a URL do frontend (ex: `https://chama-o-mika.vercel.app`)
+3. Anote a URL do frontend (ex: `https://smartmanager.vercel.app`)
 
 ### 4. Atualizar CORS no Backend
 

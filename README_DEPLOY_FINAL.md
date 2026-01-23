@@ -63,7 +63,7 @@ python force_deploy_users.py
 Após executar o script:
 1. **Aguarde 2 minutos**
 2. **Limpe cache do navegador**
-3. **Acesse:** https://chama-o-mika.vercel.app
+3. **Acesse:** https://smartmanager.vercel.app
 4. **Faça login** com admin/mika123
 5. **Teste criar categoria**
 

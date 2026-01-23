@@ -1,4 +1,4 @@
-# ✅ Checklist de Deploy - Chama o Mika
+# ✅ Checklist de Deploy - SmartManager
 
 Use este checklist para garantir que tudo está pronto para o deploy.
 

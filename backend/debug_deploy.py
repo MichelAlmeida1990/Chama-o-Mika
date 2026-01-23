@@ -14,14 +14,14 @@ def debug_deploy():
     
     # URLs para testar
     urls_to_test = [
-        ("Frontend Principal", "https://chama-o-mika.vercel.app"),
-        ("Frontend Login", "https://chama-o-mika.vercel.app/login"),
-        ("Backend API", "https://chama-o-mika.vercel.app/api"),
-        ("Backend Auth", "https://chama-o-mika.vercel.app/api/auth/login"),
-        ("Backend Status", "https://chama-o-mika.vercel.app/api/auth/user"),
-        ("Backend Categorias", "https://chama-o-mika.vercel.app/api/estoque/categorias"),
-        ("Backend Deploy", "https://chama-o-mika-backend.onrender.com"),
-        ("Backend API Render", "https://chama-o-mika-backend.onrender.com/api"),
+        ("Frontend Principal", "https://smartmanager.vercel.app"),
+        ("Frontend Login", "https://smartmanager.vercel.app/login"),
+        ("Backend API", "https://smartmanager.vercel.app/api"),
+        ("Backend Auth", "https://smartmanager.vercel.app/api/auth/login"),
+        ("Backend Status", "https://smartmanager.vercel.app/api/auth/user"),
+        ("Backend Categorias", "https://smartmanager.vercel.app/api/estoque/categorias"),
+        ("Backend Deploy", "https://smartmanager-backend.onrender.com"),
+        ("Backend API Render", "https://smartmanager-backend.onrender.com/api"),
     ]
     
     print("1. TESTANDO TODAS AS URLs:")

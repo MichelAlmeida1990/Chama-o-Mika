@@ -9,7 +9,7 @@ import time
 def check_deploy_update():
     """Verificar se o deploy foi atualizado"""
     
-    base_url = "https://chama-o-mika.vercel.app"
+    base_url = "https://smartmanager.vercel.app"
     
     print("=== VERIFICANDO ATUALIZAÇÃO DO DEPLOY ===")
     print(f"URL: {base_url}")
@@ -45,7 +45,7 @@ def check_deploy_update():
                         print()
                         print("📋 PRÓXIMOS PASSOS:")
                         print("1. Execute 'deploy_vercel.py' no servidor Vercel")
-                        print("2. Acesse: https://chama-o-mika.vercel.app")
+                        print("2. Acesse: https://smartmanager.vercel.app")
                         print("3. Faça login com: admin / mika123")
                         print("4. Teste criação de categoria")
                         return True

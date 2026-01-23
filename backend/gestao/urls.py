@@ -12,7 +12,7 @@ from .deploy_views import create_deploy_users_view, check_deploy_status_view
 def api_root(request):
     """API root endpoint"""
     return JsonResponse({
-        'message': 'Chama o Mika API',
+        'message': 'SmartManager API',
         'version': '1.0.0',
         'endpoints': {
             'auth': '/api/auth/',

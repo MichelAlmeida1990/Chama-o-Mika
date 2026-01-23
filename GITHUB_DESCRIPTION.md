@@ -8,7 +8,7 @@ Sistema completo de gestão de estoque e financeiro para lojas de roupas. Desenv
 
 ## Descrição Completa
 
-**Chama o Mika** é um sistema completo de gestão de estoque e financeiro desenvolvido especificamente para lojas de roupas. Oferece controle total sobre produtos, categorias, vendas, compras, clientes e relatórios financeiros.
+**SmartManager** é um sistema completo de gestão de estoque e financeiro desenvolvido especificamente para lojas de roupas. Oferece controle total sobre produtos, categorias, vendas, compras, clientes e relatórios financeiros.
 
 ### 🚀 Tecnologias
 

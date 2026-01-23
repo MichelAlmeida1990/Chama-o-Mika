@@ -4,10 +4,10 @@
 
 ### ✅ Comportamento Normal e Esperado
 
-**1. Usuário acessa:** `https://chama-o-mika.vercel.app/login`
+**1. Usuário acessa:** `https://smartmanager.vercel.app/login`
 **2. Frontend React carrega** e mostra a tela de login
 **3. Usuário faz login** com credenciais corretas
-**4. Frontend redireciona para:** `https://chama-o-mika.vercel.app/ca`
+**4. Frontend redireciona para:** `https://smartmanager.vercel.app/ca`
 
 **Isso está CORRETO!** 🎯
 
@@ -32,7 +32,7 @@
 
 **4. **Por que `/ca` e não `/`?**
 - Histórico do sistema original
-- `ca` = "Chama o Mika" (nome do sistema)
+- `ca` = "SmartManager" (nome do sistema)
 - Mantém consistência com as URLs internas
 
 ---
@@ -40,7 +40,7 @@
 ## 🔄 Fluxo Completo
 
 ```
-Usuário acessa: https://chama-o-mika.vercel.app/login
+Usuário acessa: https://smartmanager.vercel.app/login
          ↓
 [Formulário de Login]
          ↓
@@ -59,7 +59,7 @@ Usuário acessa: https://chama-o-mika.vercel.app/login
 
 ### Para confirmar que está tudo correto:
 
-1. **Faça login** em https://chama-o-mika.vercel.app/login
+1. **Faça login** em https://smartmanager.vercel.app/login
 2. **Use as credenciais:**
    - User: `admin` / Password: `mika123`
    - User: `mika` / Password: `mika123`
