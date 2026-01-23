@@ -29,6 +29,13 @@ ChartJS.register(
   Legend
 );
 
+// Função auxiliar para remover URL base
+const removeBaseUrl = (url) => {
+  if (!url) return null;
+  const urlObj = new URL(url);
+  return urlObj.pathname + urlObj.search;
+};
+
 const Dashboard = () => {
   const [stats, setStats] = useState({
     totalProdutos: 0,
@@ -160,7 +167,7 @@ const Dashboard = () => {
             break;
           } else {
             allVendasRecentes = allVendasRecentes.concat(data.results || []);
-            nextUrl = data.next ? data.next.replace(/^https?:\/\/[^\/]+/, '') : null;
+            nextUrl = data.next ? removeBaseUrl(data.next) : null;
             if (allVendasRecentes.length >= 5) break;
           }
         }

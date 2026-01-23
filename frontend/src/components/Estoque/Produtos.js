@@ -3,6 +3,13 @@ import { Card, Table, Button, Modal, Form, Alert, Badge, InputGroup, Row, Col } 
 import api from '../../services/api';
 import { FiPlus, FiEdit, FiTrash2, FiAlertCircle } from 'react-icons/fi';
 
+// Função auxiliar para remover URL base
+const removeBaseUrl = (url) => {
+  if (!url) return null;
+  const urlObj = new URL(url);
+  return urlObj.pathname + urlObj.search;
+};
+
 const Produtos = () => {
   const [produtos, setProdutos] = useState([]);
   const [categorias, setCategorias] = useState([]);
@@ -48,7 +55,7 @@ const Produtos = () => {
         } else {
           // Se tiver paginação, adicionar resultados e buscar próxima página
           allProdutos = allProdutos.concat(data.results || []);
-          nextUrl = data.next ? data.next.replace(/^https?:\/\/[^\/]+/, '') : null;
+          nextUrl = data.next ? removeBaseUrl(data.next) : null;
         }
       }
       
