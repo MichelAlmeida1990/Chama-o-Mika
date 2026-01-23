@@ -1,4 +1,4 @@
-from rest_framework import viewsets, filters, status
+from rest_framework import viewsets, filters, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db import models
@@ -12,6 +12,7 @@ from .serializers import (
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['nome']
     ordering_fields = ['nome', 'criado_em']
@@ -21,6 +22,7 @@ class CategoriaViewSet(viewsets.ModelViewSet):
 class ProdutoViewSet(viewsets.ModelViewSet):
     queryset = Produto.objects.select_related('categoria').all()
     serializer_class = ProdutoSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
     search_fields = ['nome', 'modelo', 'cor', 'categoria__nome']
     ordering_fields = ['nome', 'quantidade', 'preco_venda', 'criado_em']
@@ -63,6 +65,7 @@ class ProdutoViewSet(viewsets.ModelViewSet):
 class MovimentacaoEstoqueViewSet(viewsets.ModelViewSet):
     queryset = MovimentacaoEstoque.objects.select_related('produto', 'usuario').all()
     serializer_class = MovimentacaoEstoqueSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
     search_fields = ['produto__nome', 'observacao']
     ordering_fields = ['criado_em']

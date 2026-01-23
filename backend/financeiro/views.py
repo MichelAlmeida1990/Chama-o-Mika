@@ -1,4 +1,4 @@
-from rest_framework import viewsets, filters, status
+from rest_framework import viewsets, filters, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Sum, Q
@@ -17,6 +17,7 @@ from .serializers import (
 class ClienteViewSet(viewsets.ModelViewSet):
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
     search_fields = ['nome', 'cpf_cnpj', 'email', 'telefone']
     ordering_fields = ['nome', 'criado_em']
@@ -40,6 +41,7 @@ class ClienteViewSet(viewsets.ModelViewSet):
 class VendaViewSet(viewsets.ModelViewSet):
     queryset = Venda.objects.select_related('usuario').prefetch_related('itens__produto').all()
     serializer_class = VendaSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
     search_fields = ['numero', 'cliente']
     ordering_fields = ['criado_em', 'total']
@@ -122,6 +124,7 @@ class VendaViewSet(viewsets.ModelViewSet):
 class CompraViewSet(viewsets.ModelViewSet):
     queryset = Compra.objects.select_related('usuario').prefetch_related('itens__produto').all()
     serializer_class = CompraSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
     search_fields = ['numero', 'fornecedor']
     ordering_fields = ['criado_em', 'total']
@@ -171,6 +174,7 @@ class CompraViewSet(viewsets.ModelViewSet):
 class ContaPagarViewSet(viewsets.ModelViewSet):
     queryset = ContaPagar.objects.all()
     serializer_class = ContaPagarSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
     search_fields = ['descricao']
     ordering_fields = ['data_vencimento', 'valor']
@@ -203,6 +207,7 @@ class ContaPagarViewSet(viewsets.ModelViewSet):
 class ContaReceberViewSet(viewsets.ModelViewSet):
     queryset = ContaReceber.objects.all()
     serializer_class = ContaReceberSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
     search_fields = ['descricao']
     ordering_fields = ['data_vencimento', 'valor']
@@ -234,6 +239,7 @@ class ContaReceberViewSet(viewsets.ModelViewSet):
 
 class RelatorioFinanceiroViewSet(viewsets.ViewSet):
     """ViewSet para relatórios financeiros"""
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     @action(detail=False, methods=['get'])
     def fluxo_caixa(self, request):
